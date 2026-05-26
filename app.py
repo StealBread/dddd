@@ -9,72 +9,6 @@ st.set_page_config(
     layout="centered"
 )
 
-# CSS 스타일
-st.markdown("""
-<style>
-.stApp {
-    background-color: #FFD700;
-    text-align: center;
-}
-
-/* 제목 */
-h1 {
-    color: black;
-    text-align: center;
-    font-size: 50px;
-}
-
-/* 설명 */
-p {
-    color: black;
-    font-size: 20px;
-}
-
-/* 버튼 */
-div.stButton > button {
-    background-color: black;
-    color: yellow;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 15px;
-    padding: 12px 30px;
-    border: none;
-}
-
-/* 룰렛 텍스트 */
-.roulette {
-    font-size: 60px;
-    font-weight: bold;
-    margin-top: 40px;
-    animation: pop 0.4s ease;
-}
-
-/* 희귀도 */
-.rarity {
-    font-size: 35px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-/* 애니메이션 */
-@keyframes pop {
-    0% {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-
-    50% {
-        transform: scale(1.3);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-</style>
-""", unsafe_allow_html=True)
-
 # 브롤러 데이터
 brawlers = {
 
@@ -93,7 +27,7 @@ brawlers = {
     "영웅": [
         "비비", "비", "에드거",
         "그리프", "그롬", "보니",
-        "개일", "코델리우스"
+        "게일", "코델리우스"
     ],
 
     "신화": [
@@ -118,54 +52,175 @@ rarity_colors = {
     "전설": "#FFD700"
 }
 
+# CSS
+st.markdown("""
+<style>
+
+/* 전체 배경 */
+.stApp {
+    background: linear-gradient(180deg, #FFD93D 0%, #FFB800 100%);
+}
+
+/* 제목 */
+.title {
+    font-size: 60px;
+    font-weight: 900;
+    color: black;
+    text-align: center;
+    text-shadow:
+        4px 4px 0px white,
+        8px 8px 0px #00000030;
+    margin-top: 20px;
+}
+
+/* 설명 */
+.desc {
+    text-align: center;
+    color: black;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* 버튼 */
+div.stButton > button {
+    width: 100%;
+    background: linear-gradient(180deg, #00C6FF 0%, #0072FF 100%);
+    color: white;
+    font-size: 30px;
+    font-weight: 900;
+    border-radius: 20px;
+    border: 4px solid black;
+    padding: 15px;
+    box-shadow: 0px 8px 0px #003B80;
+    transition: 0.1s;
+}
+
+/* 버튼 눌림 효과 */
+div.stButton > button:active {
+    transform: translateY(6px);
+    box-shadow: 0px 2px 0px #003B80;
+}
+
+/* 카드 */
+.result-box {
+    background: white;
+    border-radius: 30px;
+    border: 6px solid black;
+    padding: 40px;
+    margin-top: 40px;
+    text-align: center;
+    box-shadow: 0px 10px 0px #00000030;
+}
+
+/* 브롤러 이름 */
+.brawler-name {
+    font-size: 75px;
+    font-weight: 900;
+    color: black;
+    animation: pop 0.4s ease;
+}
+
+/* 희귀도 */
+.rarity {
+    font-size: 40px;
+    font-weight: 900;
+    margin-top: 10px;
+}
+
+/* 룰렛 애니메이션 */
+@keyframes pop {
+    0% {
+        transform: scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2) rotate(5deg);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Streamlit 기본 요소 숨기기 */
+#MainMenu {
+    visibility: hidden;
+}
+
+footer {
+    visibility: hidden;
+}
+
+header {
+    visibility: hidden;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 # 제목
-st.title("🎮 브롤스타즈 룰렛")
+st.markdown(
+    '<div class="title">🎮 브롤스타즈 룰렛</div>',
+    unsafe_allow_html=True
+)
 
-st.write("버튼을 눌러 랜덤 브롤러를 뽑아보세요!")
+st.markdown(
+    '<div class="desc">버튼을 눌러 랜덤 브롤러를 뽑아보세요!</div>',
+    unsafe_allow_html=True
+)
 
-# 결과 표시 영역
-result_area = st.empty()
+# 결과 영역
+result = st.empty()
 
 # 버튼
 if st.button("🎲 룰렛 돌리기!"):
 
     # 룰렛 효과
-    for _ in range(20):
+    for _ in range(25):
 
         rarity = random.choice(list(brawlers.keys()))
         brawler = random.choice(brawlers[rarity])
 
         color = rarity_colors[rarity]
 
-        result_area.markdown(
+        result.markdown(
             f"""
-            <div class="roulette">
-                {brawler}
-            </div>
+            <div class="result-box">
+                <div class="brawler-name">
+                    {brawler}
+                </div>
 
-            <div class="rarity" style="color:{color};">
-                {rarity}
+                <div class="rarity" style="color:{color};">
+                    ★ {rarity} ★
+                </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        time.sleep(0.08)
+        time.sleep(0.07)
 
-    # 최종 선택
+    # 최종 결과
     final_rarity = random.choice(list(brawlers.keys()))
     final_brawler = random.choice(brawlers[final_rarity])
 
     final_color = rarity_colors[final_rarity]
 
-    result_area.markdown(
+    result.markdown(
         f"""
-        <div class="roulette">
-            🎉 {final_brawler} 🎉
-        </div>
+        <div class="result-box">
 
-        <div class="rarity" style="color:{final_color};">
-            ★ {final_rarity} ★
+            <div class="brawler-name">
+                🎉 {final_brawler} 🎉
+            </div>
+
+            <div class="rarity" style="color:{final_color};">
+                ★ {final_rarity} ★
+            </div>
+
         </div>
         """,
         unsafe_allow_html=True
