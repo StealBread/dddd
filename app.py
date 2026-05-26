@@ -1,229 +1,74 @@
-import streamlit as st
 import random
-import time
-
-# 페이지 설정
-st.set_page_config(
-    page_title="브롤스타즈 룰렛",
-    page_icon="🎮",
-    layout="centered"
-)
-
-# 브롤러 데이터
-brawlers = {
-
-    "희귀": [
-        "쉘리", "니타", "콜트", "불",
-        "브록", "엘 프리모", "발리",
-        "포코", "로사"
+    "홍루": [
+        "흑운회",
+        "갈고리 사무소",
+        "콩콩이파",
+        "남부 디에치 협회"
     ],
-
-    "초희귀": [
-        "제시", "다이너마이크", "틱",
-        "8비트", "리코", "대릴",
-        "페니", "칼", "재키"
+    "히스클리프": [
+        "토끼팀",
+        "시 협회",
+        "피쿼드호",
+        "멀티크랙 사무소"
     ],
-
-    "영웅": [
-        "비비", "비", "에드거",
-        "그리프", "그롬", "보니",
-        "게일", "코델리우스"
+    "이스마엘": [
+        "어금니 보트센터",
+        "피쿼드호 선원",
+        "남부 리우 협회",
+        "LCCB 대리"
     ],
-
-    "신화": [
-        "모티스", "타라", "진",
-        "맥스", "미스터 P", "스퀴크",
-        "루", "버즈", "팽"
+    "로쟈": [
+        "흑운회 와카슈",
+        "장미스패너 공방",
+        "남부 디에치 협회",
+        "남부 츠바이 협회"
     ],
-
-    "전설": [
-        "스파이크", "크로우",
-        "레온", "샌디",
-        "앰버", "메그", "체스터"
+    "싱클레어": [
+        "N사 못 박는 자",
+        "마리아치",
+        "새벽 사무소",
+        "검계"
+    ],
+    "오티스": [
+        "검계",
+        "남부 세븐 협회",
+        "G사 부장",
+        "마탄"
+    ],
+    "그레고르": [
+        "쌍갈고리 해적단",
+        "남부 츠바이 협회",
+        "장미스패너 공방",
+        "G사 일등대리"
     ]
 }
 
-# 희귀도 색상
-rarity_colors = {
-    "희귀": "#4CAF50",
-    "초희귀": "#2196F3",
-    "영웅": "#9C27B0",
-    "신화": "#FF5722",
-    "전설": "#FFD700"
-}
+st.title("🎲 림버스 컴퍼니 인격 랜덤 선택기")
+st.write("원하는 수감자의 인격을 랜덤으로 선택해보자!")
 
-# CSS
-st.markdown("""
-<style>
-
-/* 전체 배경 */
-.stApp {
-    background: linear-gradient(180deg, #FFD93D 0%, #FFB800 100%);
-}
-
-/* 제목 */
-.title {
-    font-size: 60px;
-    font-weight: 900;
-    color: black;
-    text-align: center;
-    text-shadow:
-        4px 4px 0px white,
-        8px 8px 0px #00000030;
-    margin-top: 20px;
-}
-
-/* 설명 */
-.desc {
-    text-align: center;
-    color: black;
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-/* 버튼 */
-div.stButton > button {
-    width: 100%;
-    background: linear-gradient(180deg, #00C6FF 0%, #0072FF 100%);
-    color: white;
-    font-size: 30px;
-    font-weight: 900;
-    border-radius: 20px;
-    border: 4px solid black;
-    padding: 15px;
-    box-shadow: 0px 8px 0px #003B80;
-    transition: 0.1s;
-}
-
-/* 버튼 눌림 효과 */
-div.stButton > button:active {
-    transform: translateY(6px);
-    box-shadow: 0px 2px 0px #003B80;
-}
-
-/* 카드 */
-.result-box {
-    background: white;
-    border-radius: 30px;
-    border: 6px solid black;
-    padding: 40px;
-    margin-top: 40px;
-    text-align: center;
-    box-shadow: 0px 10px 0px #00000030;
-}
-
-/* 브롤러 이름 */
-.brawler-name {
-    font-size: 75px;
-    font-weight: 900;
-    color: black;
-    animation: pop 0.4s ease;
-}
-
-/* 희귀도 */
-.rarity {
-    font-size: 40px;
-    font-weight: 900;
-    margin-top: 10px;
-}
-
-/* 룰렛 애니메이션 */
-@keyframes pop {
-    0% {
-        transform: scale(0.5) rotate(-10deg);
-        opacity: 0;
-    }
-
-    50% {
-        transform: scale(1.2) rotate(5deg);
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Streamlit 기본 요소 숨기기 */
-#MainMenu {
-    visibility: hidden;
-}
-
-footer {
-    visibility: hidden;
-}
-
-header {
-    visibility: hidden;
-}
-
-</style>
-""", unsafe_allow_html=True)
-
-# 제목
-st.markdown(
-    '<div class="title">🎮 브롤스타즈 룰렛</div>',
-    unsafe_allow_html=True
+# 수감자 선택
+selected_character = st.selectbox(
+    "수감자를 선택하세요",
+    list(identities.keys())
 )
 
-st.markdown(
-    '<div class="desc">버튼을 눌러 랜덤 브롤러를 뽑아보세요!</div>',
-    unsafe_allow_html=True
-)
+col1, col2 = st.columns(2)
 
-# 결과 영역
-result = st.empty()
+with col1:
+    if st.button("선택한 수감자 랜덤 뽑기"):
+        result = random.choice(identities[selected_character])
 
-# 버튼
-if st.button("🎲 룰렛 돌리기!"):
+        st.success(f"{selected_character}의 랜덤 인격")
+        st.subheader(f"✨ {result}")
 
-    # 룰렛 효과
-    for _ in range(25):
+with col2:
+    if st.button("전체 랜덤 뽑기"):
+        random_character = random.choice(list(identities.keys()))
+        result = random.choice(identities[random_character])
 
-        rarity = random.choice(list(brawlers.keys()))
-        brawler = random.choice(brawlers[rarity])
+        st.success("전체 랜덤 결과")
+        st.subheader(f"🎯 {random_character} - {result}")
 
-        color = rarity_colors[rarity]
+st.divider()
 
-        result.markdown(
-            f"""
-            <div class="result-box">
-                <div class="brawler-name">
-                    {brawler}
-                </div>
-
-                <div class="rarity" style="color:{color};">
-                    ★ {rarity} ★
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        time.sleep(0.07)
-
-    # 최종 결과
-    final_rarity = random.choice(list(brawlers.keys()))
-    final_brawler = random.choice(brawlers[final_rarity])
-
-    final_color = rarity_colors[final_rarity]
-
-    result.markdown(
-        f"""
-        <div class="result-box">
-
-            <div class="brawler-name">
-                🎉 {final_brawler} 🎉
-            </div>
-
-            <div class="rarity" style="color:{final_color};">
-                ★ {final_rarity} ★
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.balloons()
+st.caption("※ 인격 데이터는 예시이며 자유롭게 추가 가능")
