@@ -1,200 +1,112 @@
-
-import random
 import streamlit as st
+from google import genai
 
+# 페이지 설정
 st.set_page_config(
-    page_title="림버스 컴퍼니 인격 랜덤 선택기",
-    page_icon="🎲",
-    layout="centered"
+    page_title="게임 챗봇",
+    page_icon="🎮",
 )
 
-identities = {
-    "이상": [
-        "LCB 수감자",
-        "세븐 협회 6과",
-        "검계 살수",
-        "W사 3등급 정리 요원",
-        "피쿼드호 일등 항해사",
-        "어금니 보트센터 해결사",
-        "남부 디에치 협회 4과",
-        "남부 츠바이 협회 6과",
-        "로보토미 E.G.O::홍적",
-        "향기잎 책갈피",
-        "에드가 가문 집사",
-        "멀티크랙 사무소 대표"
-    ],
+st.title("🎮 게임 챗봇")
+st.caption("Gemini 2.5 Flash Lite 기반 게임 상담 챗봇")
 
-    "파우스트": [
-        "LCB 수감자",
-        "쥐는 자",
-        "W사 정리 요원",
-        "남부 세븐 협회 4과",
-        "로보토미 E.G.O::후회",
-        "남부 리우 협회 4과",
-        "어금니 사무소 해결사",
-        "흑운회",
-        "N사 중간 망치",
-        "에드가 가문 상속자",
-        "워더링하이츠 버틀러"
-    ],
+# API 키 확인
+try:
+    api_key = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    st.error("GEMINI_API_KEY가 Secrets에 설정되지 않았습니다.")
+    st.stop()
 
-    "돈키호테": [
-        "LCB 수감자",
-        "W사 정리 요원",
-        "중지 작은 아우",
-        "N사 중간 망치",
-        "남부 시 협회 5과",
-        "흑운회 와카슈",
-        "남부 츠바이 협회",
-        "새벽 사무소",
-        "피쿼드호 해결사",
-        "라만차랜드 관리자",
-        "T사 수집가"
-    ],
+# Gemini 클라이언트 생성
+try:
+    client = genai.Client(api_key=api_key)
+except Exception as e:
+    st.error(f"Gemini 클라이언트 생성 실패: {e}")
+    st.stop()
 
-    "료슈": [
-        "LCB 수감자",
-        "쿠로쿠모 와카슈",
-        "남부 리우 협회 4과",
-        "LCCB 대리",
-        "검계",
-        "W사 정리 요원",
-        "피쿼드호 선원",
-        "로보토미 E.G.O::산호",
-        "에드가 가문 버틀러",
-        "남부 시 협회 해결사",
-        "어금니 보트센터"
-    ],
-
-    "뫼르소": [
-        "LCB 수감자",
-        "R사 코뿔소팀",
-        "N사 큰 망치",
-        "중지 큰형님",
-        "장미스패너 공방 대표",
-        "남부 츠바이 협회",
-        "W사 정리 요원",
-        "남부 리우 협회",
-        "검계",
-        "라만차랜드 왕자",
-        "엄지 카포"
-    ],
-
-    "홍루": [
-        "LCB 수감자",
-        "흑운회",
-        "갈고리 사무소",
-        "콩콩이파",
-        "남부 디에치 협회",
-        "W사 정리 요원",
-        "K사 직원",
-        "피쿼드호 선원",
-        "검계",
-        "T사 수집가",
-        "에드가 가문 버틀러"
-    ],
-
-    "히스클리프": [
-        "LCB 수감자",
-        "R사 토끼팀",
-        "남부 시 협회",
-        "피쿼드호",
-        "멀티크랙 사무소",
-        "검계",
-        "새벽 사무소",
-        "N사 전투원",
-        "와일드 헌트",
-        "중지 큰형님",
-        "워더링하이츠 버틀러"
-    ],
-
-    "이스마엘": [
-        "LCB 수감자",
-        "어금니 보트센터",
-        "피쿼드호 선원",
-        "남부 리우 협회",
-        "LCCB 대리",
-        "W사 정리 요원",
-        "남부 세븐 협회",
-        "검계",
-        "피쿼드 선장",
-        "에드가 가문 버틀러",
-        "로보토미 E.G.O::맹목"
-    ],
-
-    "로쟈": [
-        "LCB 수감자",
-        "흑운회 와카슈",
-        "장미스패너 공방",
-        "남부 디에치 협회",
-        "남부 츠바이 협회",
-        "리우 협회",
-        "N사 중간 망치",
-        "W사 정리 요원",
-        "갈고리 사무소",
-        "데비야트 협회",
-        "남부 리우 협회 4과장"
-    ],
-
-    "싱클레어": [
-        "LCB 수감자",
-        "N사 못 박는 자",
-        "마리아치",
-        "새벽 사무소",
-        "검계",
-        "남부 츠바이 협회",
-        "W사 정리 요원",
-        "세븐 협회",
-        "붉은 시선",
-        "에드가 가문 집사",
-        "필립클레어"
-    ],
-
-    "오티스": [
-        "LCB 수감자",
-        "검계",
-        "남부 세븐 협회",
-        "G사 부장",
-        "마탄",
-        "남부 시 협회",
-        "리우 협회",
-        "W사 정리 요원",
-        "흑운회",
-        "몰러 사무소 해결사",
-        "워더링하이츠 버틀러"
-    ],
-
-    "그레고르": [
-        "LCB 수감자",
-        "쌍갈고리 해적단",
-        "남부 츠바이 협회",
-        "장미스패너 공방",
-        "G사 일등대리",
-        "리우 협회",
-        "세븐 협회",
-        "W사 정리 요원",
-        "검계",
-        "R.B. 조리장",
-        "로보토미 E.G.O::등불"
+# 채팅 기록 초기화
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {
+            "role": "assistant",
+            "content": "안녕하세요! 🎮 게임 관련 질문을 해보세요. 추천, 공략, 장르 설명 등을 도와드릴게요."
+        }
     ]
-}
 
-st.title("🎲 림버스 컴퍼니 인격 랜덤 선택기")
+# 기존 메시지 출력
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-selected_character = st.selectbox(
-    "수감자를 선택하세요",
-    list(identities.keys())
-)
+# 사용자 입력
+prompt = st.chat_input("게임에 대해 물어보세요")
 
-if st.button("랜덤 인격 뽑기"):
-    result = random.choice(identities[selected_character])
+if prompt:
+    # 사용자 메시지 저장
+    st.session_state.messages.append(
+        {"role": "user", "content": prompt}
+    )
 
-    st.success("랜덤 결과")
-    st.subheader(f"🎯 {selected_character} - {result}")
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-if st.button("전체 랜덤 뽑기"):
-    random_character = random.choice(list(identities.keys()))
-    result = random.choice(identities[random_character])
+    # 대화 기록 생성
+    history_text = ""
 
-    st.success("전체 랜덤 결과")
-    st.subheader(f"✨ {random_character} - {result}")
+    for msg in st.session_state.messages:
+        role = "사용자" if msg["role"] == "user" else "챗봇"
+        history_text += f"{role}: {msg['content']}\n"
+
+    system_prompt = """
+당신은 게임 전문 챗봇입니다.
+
+규칙:
+- 게임 추천
+- 게임 공략 팁
+- 장르 설명
+- PC, 모바일, 콘솔 게임 정보
+- 친절하고 이해하기 쉽게 답변
+
+게임과 무관한 질문도 답변할 수 있습니다.
+"""
+
+    full_prompt = f"""
+{system_prompt}
+
+대화 기록:
+{history_text}
+
+최신 사용자 질문:
+{prompt}
+"""
+
+    with st.chat_message("assistant"):
+        try:
+            with st.spinner("답변 생성 중..."):
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash-lite",
+                    contents=full_prompt
+                )
+
+                answer = response.text
+
+                st.markdown(answer)
+
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": answer
+                    }
+                )
+
+        except Exception as e:
+            error_msg = f"오류가 발생했습니다: {e}"
+
+            st.error(error_msg)
+
+            st.session_state.messages.append(
+                {
+                    "role": "assistant",
+                    "content": error_msg
+                }
+            )
